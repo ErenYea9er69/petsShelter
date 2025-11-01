@@ -25,6 +25,15 @@ public class Animal {
         return name + " (" + age + " years old, " + color + ")";
     }
     
+    // Get detailed information about the pet
+    public String getDetailedInfo() {
+        return "Name: " + name + "\n" +
+               "Age: " + age + " years old\n" +
+               "Color: " + color + "\n" +
+               "Sound: " + makeSound() + "\n" +
+               "Special Ability: " + getSpecialAbility();
+    }
+    
     public String getName() { return name; }
     public int getAge() { return age; }
     public String getColor() { return color; }
@@ -35,20 +44,29 @@ class Dog extends Animal {
     private String breed;
     
     public Dog(String name, int age, String color, String breed) {
-        super(name, age, color);  // Call parent constructor
+        super(name, age, color);
         this.breed = breed;
     }
     
-    // Override parent method to provide Dog-specific behavior
     @Override
     public String makeSound() {
         return "Woof! Woof!";
     }
     
-    // Override parent method to provide Dog-specific behavior
     @Override
     public String getSpecialAbility() {
         return "Can fetch and guard the house";
+    }
+    
+    @Override
+    public String getDetailedInfo() {
+        return "Type: Dog\n" +
+               "Name: " + name + "\n" +
+               "Age: " + age + " years old\n" +
+               "Color: " + color + "\n" +
+               "Breed: " + breed + "\n" +
+               "Sound: " + makeSound() + "\n" +
+               "Special Ability: " + getSpecialAbility();
     }
     
     public String getBreed() {
@@ -61,20 +79,29 @@ class Cat extends Animal {
     private boolean isIndoor;
     
     public Cat(String name, int age, String color, boolean isIndoor) {
-        super(name, age, color);  // Call parent constructor
+        super(name, age, color);
         this.isIndoor = isIndoor;
     }
     
-    // Override parent method to provide Cat-specific behavior
     @Override
     public String makeSound() {
         return "Meow! Meow!";
     }
     
-    // Override parent method to provide Cat-specific behavior
     @Override
     public String getSpecialAbility() {
         return "Expert climber and mouse hunter";
+    }
+    
+    @Override
+    public String getDetailedInfo() {
+        String type = isIndoor ? "Indoor" : "Outdoor";
+        return "Type: Cat (" + type + ")\n" +
+               "Name: " + name + "\n" +
+               "Age: " + age + " years old\n" +
+               "Color: " + color + "\n" +
+               "Sound: " + makeSound() + "\n" +
+               "Special Ability: " + getSpecialAbility();
     }
     
     public boolean isIndoor() {
@@ -87,20 +114,29 @@ class Bird extends Animal {
     private double wingSpan;
     
     public Bird(String name, int age, String color, double wingSpan) {
-        super(name, age, color);  // Call parent constructor
+        super(name, age, color);
         this.wingSpan = wingSpan;
     }
     
-    // Override parent method to provide Bird-specific behavior
     @Override
     public String makeSound() {
         return "Tweet! Tweet!";
     }
     
-    // Override parent method to provide Bird-specific behavior
     @Override
     public String getSpecialAbility() {
         return "Can fly up to " + wingSpan + " meters high";
+    }
+    
+    @Override
+    public String getDetailedInfo() {
+        return "Type: Bird\n" +
+               "Name: " + name + "\n" +
+               "Age: " + age + " years old\n" +
+               "Color: " + color + "\n" +
+               "Wing Span: " + wingSpan + " meters\n" +
+               "Sound: " + makeSound() + "\n" +
+               "Special Ability: " + getSpecialAbility();
     }
     
     public double getWingSpan() {
@@ -119,7 +155,7 @@ class PetShelter {
         petCount = 0;
     }
     
-    // Add pet to the table
+    // Add pet to the shelter
     public boolean addPet(Animal pet) {
         if (petCount < MAX_PETS) {
             pets[petCount] = pet;
@@ -132,7 +168,7 @@ class PetShelter {
         }
     }
     
-    // Delete pet by name from the table
+    // Delete pet by name from the shelter
     public boolean deletePet(String petName) {
         for (int i = 0; i < petCount; i++) {
             if (pets[i].getName().equalsIgnoreCase(petName)) {
@@ -143,7 +179,7 @@ class PetShelter {
                     pets[j] = pets[j + 1];
                 }
                 
-                pets[petCount - 1] = null;  // Clear the last position
+                pets[petCount - 1] = null;
                 petCount--;
                 System.out.println(petName + " has been removed.");
                 return true;
@@ -153,50 +189,64 @@ class PetShelter {
         return false;
     }
     
-    // Get sound using instanceof to check the actual class type
+    // Delete pet by index
+    public boolean deletePetByIndex(int index) {
+        if (index < 0 || index >= petCount) {
+            System.out.println("Invalid index!");
+            return false;
+        }
+        
+        String petName = pets[index].getName();
+        System.out.println("Deleting " + petName + " from shelter...");
+        
+        // Shift all elements to the left to fill the gap
+        for (int j = index; j < petCount - 1; j++) {
+            pets[j] = pets[j + 1];
+        }
+        
+        pets[petCount - 1] = null;
+        petCount--;
+        System.out.println(petName + " has been removed.");
+        return true;
+    }
+    
+    // Get pet by name
+    public Animal getPet(String petName) {
+        for (int i = 0; i < petCount; i++) {
+            if (pets[i].getName().equalsIgnoreCase(petName)) {
+                return pets[i];
+            }
+        }
+        return null;
+    }
+    
+    // Get pet by index
+    public Animal getPetByIndex(int index) {
+        if (index >= 0 && index < petCount) {
+            return pets[index];
+        }
+        return null;
+    }
+    
+    // Get detailed information about a pet
+    public String getPetDetailedInfo(String petName) {
+        Animal pet = getPet(petName);
+        if (pet != null) {
+            return pet.getDetailedInfo();
+        }
+        return "Pet named '" + petName + "' not found.";
+    }
+    
+    // Get sound using polymorphism
     public String getPetSound(String petName) {
-        for (int i = 0; i < petCount; i++) {
-            if (pets[i].getName().equalsIgnoreCase(petName)) {
-                Animal pet = pets[i];
-                
-                if (pet instanceof Dog) {
-                    return pet.getName() + " (Dog) says: Woof! Woof!";
-                } else if (pet instanceof Cat) {
-                    return pet.getName() + " (Cat) says: Meow! Meow!";
-                } else if (pet instanceof Bird) {
-                    return pet.getName() + " (Bird) says: Tweet! Tweet!";
-                } else {
-                    return pet.getName() + " (Generic Animal) says: Some generic animal sound";
-                }
-            }
+        Animal pet = getPet(petName);
+        if (pet != null) {
+            return pet.getName() + " says: " + pet.makeSound();
         }
         return "Pet named '" + petName + "' not found.";
     }
     
-    // Get ability using instanceof to check the actual class type
-    public String getPetAbility(String petName) {
-        for (int i = 0; i < petCount; i++) {
-            if (pets[i].getName().equalsIgnoreCase(petName)) {
-                Animal pet = pets[i];
-                
-                if (pet instanceof Dog) {
-                    Dog dog = (Dog) pet;  // Cast to Dog to access breed
-                    return pet.getName() + " (" + dog.getBreed() + "): Can fetch and guard the house";
-                } else if (pet instanceof Cat) {
-                    Cat cat = (Cat) pet;  // Cast to Cat to access isIndoor
-                    String type = cat.isIndoor() ? "Indoor" : "Outdoor";
-                    return pet.getName() + " (" + type + " Cat): Expert climber and mouse hunter";
-                } else if (pet instanceof Bird) {
-                    Bird bird = (Bird) pet;  // Cast to Bird to access wingSpan
-                    return pet.getName() + " (Bird): Can fly up to " + bird.getWingSpan() + " meters high";
-                } else {
-                    return pet.getName() + ": Has basic animal abilities";
-                }
-            }
-        }
-        return "Pet named '" + petName + "' not found.";
-    }
-    
+    // Get all pets
     public Animal[] getAllPets() {
         Animal[] result = new Animal[petCount];
         for (int i = 0; i < petCount; i++) {
@@ -209,7 +259,22 @@ class PetShelter {
     public void makeAllPetsSound() {
         System.out.println("\n=== All Pets Making Sounds ===");
         for (int i = 0; i < petCount; i++) {
-            System.out.println(getPetSound(pets[i].getName()));
+            System.out.println(pets[i].getName() + " says: " + pets[i].makeSound());
+        }
+    }
+    
+    // Display all pets with their information
+    public void displayAllPets() {
+        if (petCount == 0) {
+            System.out.println("No pets in the shelter.");
+            return;
+        }
+        
+        System.out.println("\n=== All Pets in Shelter ===");
+        for (int i = 0; i < petCount; i++) {
+            System.out.println("\nPet #" + (i + 1) + ":");
+            System.out.println(pets[i].getDetailedInfo());
+            System.out.println("---");
         }
     }
     
@@ -241,47 +306,40 @@ class PetManagementSystem {
         Cat cat2 = new Cat("Shadow", 4, "Gray", false);
         Bird bird1 = new Bird("Tweety", 1, "Yellow", 15.5);
         
-        // You can also create a generic Animal now (but it's not very useful)
-        Animal genericAnimal = new Animal("Unknown", 0, "Gray");
-        
-        // Polymorphism: adding different types as Animal
+        // Adding pets to the shelter
         shelter.addPet(dog1);
         shelter.addPet(dog2);
         shelter.addPet(cat1);
         shelter.addPet(cat2);
         shelter.addPet(bird1);
-        shelter.addPet(genericAnimal);  // This is now allowed!
         
-        System.out.println("Pets added successfully!");
-        System.out.println("Current capacity: " + shelter.getPetCount() + "/" + shelter.getMaxPets());
-        System.out.println("Remaining slots: " + shelter.getRemainingCapacity() + "\n");
+        System.out.println("\nCurrent capacity: " + shelter.getPetCount() + "/" + shelter.getMaxPets());
+        System.out.println("Remaining slots: " + shelter.getRemainingCapacity());
         
         // Display all pets
-        System.out.println("=== All Pets in Shelter ===\n");
+        shelter.displayAllPets();
         
-        Animal[] allPets = shelter.getAllPets();
-        for (Animal pet : allPets) {
-            System.out.println("Name: " + pet.getInfo());
-            System.out.println("Sound: " + pet.makeSound());  // Polymorphism!
-            System.out.println("Special Ability: " + pet.getSpecialAbility());
-            System.out.println("Type: " + pet.getClass().getSimpleName());
-            System.out.println("---");
-        }
+        // Make all pets sound
+        shelter.makeAllPetsSound();
         
-        System.out.println("\nAll pets making sounds:");
-        System.out.println(shelter.makeAllPetsSound());
+        // View detailed info of a specific pet
+        System.out.println("\n=== Detailed Info for Max ===");
+        System.out.println(shelter.getPetDetailedInfo("Max"));
         
-        // Demonstrating polymorphism with method calls
-        System.out.println("\nDemonstrating Polymorphism:");
-        Animal myPet;
+        // Delete a pet
+        System.out.println("\n=== Removing a pet ===");
+        shelter.deletePet("Buddy");
         
-        myPet = new Dog("Rocky", 2, "Brown", "Bulldog");
-        System.out.println(myPet.getName() + " says: " + myPet.makeSound());
+        // Display updated list
+        System.out.println("\nUpdated pet count: " + shelter.getPetCount());
+        shelter.displayAllPets();
         
-        myPet = new Cat("Fluffy", 3, "Orange", true);
-        System.out.println(myPet.getName() + " says: " + myPet.makeSound());
+        // Add a new pet
+        System.out.println("\n=== Adding a new pet ===");
+        Bird bird2 = new Bird("Polly", 2, "Green", 18.0);
+        shelter.addPet(bird2);
         
-        myPet = new Bird("Polly", 1, "Green", 20.0);
-        System.out.println(myPet.getName() + " says: " + myPet.makeSound());
+        // Final display
+        shelter.displayAllPets();
     }
 }
