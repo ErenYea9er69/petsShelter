@@ -3,27 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pet Management System</title>
+    <title>Pet Management System Pro</title>
+    <meta name="description" content="Advanced Pet Shelter Management System with offline support">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#667eea">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <h1 class="main-title">🐾 Pet Shelter Management System</h1>
+        <h1 class="main-title">🐾 Pet Shelter Management System Pro</h1>
+        
+        <!-- Quick Stats Banner -->
+        <div class="quick-stats-banner">
+            <div class="stat-badge">
+                <span class="badge-icon">📊</span>
+                <span>Total: <strong id="quickTotal">0</strong></span>
+            </div>
+            <div class="stat-badge">
+                <span class="badge-icon">📅</span>
+                <span>This Week: <strong id="quickWeek">0</strong></span>
+            </div>
+            <div class="stat-badge">
+                <span class="badge-icon">⏱️</span>
+                <span>Avg Age: <strong id="quickAvgAge">0</strong></span>
+            </div>
+            <button class="icon-btn" onclick="toggleKeyboardShortcuts()" title="Keyboard Shortcuts (?)">
+                <span>⌨️</span>
+            </button>
+        </div>
         
         <div class="main-content">
             <div class="card">
                 <h2>Add New Pet</h2>
                 
                 <div class="pet-type-selector">
-                    <button class="pet-type-btn active" onclick="selectPetType('dog')" data-type="dog">
+                    <button class="pet-type-btn active" onclick="selectPetType('dog')" data-type="dog" tabindex="0">
                         <span class="emoji">🐕</span>
                         <span class="label">Dog</span>
                     </button>
-                    <button class="pet-type-btn" onclick="selectPetType('cat')" data-type="cat">
+                    <button class="pet-type-btn" onclick="selectPetType('cat')" data-type="cat" tabindex="0">
                         <span class="emoji">🐱</span>
                         <span class="label">Cat</span>
                     </button>
-                    <button class="pet-type-btn" onclick="selectPetType('bird')" data-type="bird">
+                    <button class="pet-type-btn" onclick="selectPetType('bird')" data-type="bird" tabindex="0">
                         <span class="emoji">🦜</span>
                         <span class="label">Bird</span>
                     </button>
@@ -31,30 +53,30 @@
 
                 <form id="petForm">
                     <div class="form-group">
-                        <label>Pet Name</label>
-                        <input type="text" id="petName" required placeholder="Enter pet name...">
+                        <label for="petName">Pet Name *</label>
+                        <input type="text" id="petName" required placeholder="Enter pet name..." aria-required="true">
                     </div>
 
                     <div class="form-group">
-                        <label>Age (years)</label>
-                        <input type="number" id="petAge" min="0" max="30" required placeholder="Enter age...">
+                        <label for="petAge">Age (years) *</label>
+                        <input type="number" id="petAge" min="0" max="30" required placeholder="Enter age..." aria-required="true">
                     </div>
 
                     <div class="form-group">
-                        <label>Color</label>
-                        <input type="text" id="petColor" required placeholder="Enter color...">
+                        <label for="petColor">Color *</label>
+                        <input type="text" id="petColor" required placeholder="Enter color..." aria-required="true">
                     </div>
 
                     <div id="dogFields" class="specific-fields active">
                         <div class="form-group">
-                            <label>Breed</label>
+                            <label for="dogBreed">Breed</label>
                             <input type="text" id="dogBreed" placeholder="Enter breed...">
                         </div>
                     </div>
 
                     <div id="catFields" class="specific-fields">
                         <div class="form-group">
-                            <label>Indoor Cat?</label>
+                            <label for="catIndoor">Indoor Cat?</label>
                             <select id="catIndoor">
                                 <option value="true">Yes - Indoor</option>
                                 <option value="false">No - Outdoor</option>
@@ -64,7 +86,7 @@
 
                     <div id="birdFields" class="specific-fields">
                         <div class="form-group">
-                            <label>Wing Span (meters)</label>
+                            <label for="birdWingSpan">Wing Span (meters)</label>
                             <input type="number" id="birdWingSpan" step="0.1" min="0" max="10" placeholder="Enter wing span...">
                         </div>
                     </div>
@@ -80,61 +102,131 @@
                 <div class="card-header">
                     <h2>Shelter Pets</h2>
                     <div class="search-container">
-                        <input type="text" id="searchInput" placeholder="🔍 Search pets..." onkeyup="filterPets()">
+                        <input type="text" id="searchInput" placeholder="🔍 Search pets..." onkeyup="filterPets()" aria-label="Search pets">
                     </div>
                 </div>
+                
+                <!-- Advanced Filters -->
+                <div class="advanced-filters">
+                    <div class="filter-group">
+                        <label>Filter by Type:</label>
+                        <select id="filterType" onchange="applyFilters()">
+                            <option value="all">All Types</option>
+                            <option value="dog">Dogs Only</option>
+                            <option value="cat">Cats Only</option>
+                            <option value="bird">Birds Only</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label>Age Range:</label>
+                        <select id="filterAge" onchange="applyFilters()">
+                            <option value="all">All Ages</option>
+                            <option value="young">Young (0-2)</option>
+                            <option value="adult">Adult (3-7)</option>
+                            <option value="senior">Senior (8+)</option>
+                        </select>
+                    </div>
+                    
+                    <button class="reset-filters-btn" onclick="resetFilters()" title="Reset all filters">
+                        🔄 Reset
+                    </button>
+                </div>
+                
                 <div class="sort-container">
                     <label>Sort by:</label>
                     <select id="sortSelect" onchange="sortPets()">
                         <option value="newest">Newest First</option>
                         <option value="oldest">Oldest First</option>
                         <option value="name">Name (A-Z)</option>
-                        <option value="age">Age</option>
+                        <option value="age">Age (Low to High)</option>
+                        <option value="ageDesc">Age (High to Low)</option>
                     </select>
                 </div>
+                
+                <!-- Bulk Actions Bar -->
+                <div class="bulk-actions-bar" id="bulkActionsBar">
+                    <div class="bulk-info">
+                        <input type="checkbox" id="selectAllPets" onchange="toggleSelectAll()">
+                        <label for="selectAllPets">Select All (<span id="selectedCount">0</span> selected)</label>
+                    </div>
+                    <button class="bulk-delete-btn" onclick="bulkDeletePets()">
+                        🗑️ Delete Selected
+                    </button>
+                </div>
+                
                 <div id="petsList" class="pets-list">
                     <div class="empty-message">
                         <div class="empty-icon">🏠</div>
                         <p>No pets in shelter yet. Add your first pet!</p>
                     </div>
                 </div>
-                <button class="sound-all-btn" onclick="makeAllPetsSound()">
-                    <span>🔊 Make All Pets Sound</span>
-                </button>
+                
+                <div class="action-buttons-row">
+                    <button class="sound-all-btn" onclick="makeAllPetsSound()">
+                        <span>🔊 Make All Pets Sound</span>
+                    </button>
+                    <button class="export-btn" onclick="showExportOptions()">
+                        <span>📥 Export Data</span>
+                    </button>
+                </div>
+                
+                <!-- Undo Bar -->
+                <div class="undo-bar" id="undoBar">
+                    <span id="undoMessage">Pet deleted</span>
+                    <button onclick="undoDelete()">↩️ Undo</button>
+                </div>
             </div>
         </div>
 
-        <div class="stats">
-            <div class="stat-item" data-stat="total">
-                <div class="stat-icon">🐾</div>
-                <h3>Total Pets</h3>
-                <div class="number" id="petCount">0</div>
+        <!-- Enhanced Stats with Charts -->
+        <div class="stats-section">
+            <div class="stats">
+                <div class="stat-item" data-stat="total">
+                    <div class="stat-icon">🐾</div>
+                    <h3>Total Pets</h3>
+                    <div class="number" id="petCount">0</div>
+                </div>
+                <div class="stat-item" data-stat="dog">
+                    <div class="stat-icon">🐕</div>
+                    <h3>Dogs</h3>
+                    <div class="number" id="dogCount">0</div>
+                </div>
+                <div class="stat-item" data-stat="cat">
+                    <div class="stat-icon">🐱</div>
+                    <h3>Cats</h3>
+                    <div class="number" id="catCount">0</div>
+                </div>
+                <div class="stat-item" data-stat="bird">
+                    <div class="stat-icon">🦜</div>
+                    <h3>Birds</h3>
+                    <div class="number" id="birdCount">0</div>
+                </div>
             </div>
-            <div class="stat-item" data-stat="dog">
-                <div class="stat-icon">🐕</div>
-                <h3>Dogs</h3>
-                <div class="number" id="dogCount">0</div>
+            
+            <!-- Age Distribution Chart -->
+            <div class="card chart-card">
+                <h3>📊 Age Distribution</h3>
+                <canvas id="ageChart" width="400" height="200"></canvas>
             </div>
-            <div class="stat-item" data-stat="cat">
-                <div class="stat-icon">🐱</div>
-                <h3>Cats</h3>
-                <div class="number" id="catCount">0</div>
-            </div>
-            <div class="stat-item" data-stat="bird">
-                <div class="stat-icon">🦜</div>
-                <h3>Birds</h3>
-                <div class="number" id="birdCount">0</div>
+        </div>
+        
+        <!-- Timeline -->
+        <div class="card timeline-card">
+            <h3>📅 Recent Activity Timeline</h3>
+            <div id="timeline" class="timeline">
+                <p class="empty-timeline">No activity yet</p>
             </div>
         </div>
     </div>
 
     <!-- Modal for pet details -->
-    <div id="petModal" class="modal">
+    <div id="petModal" class="modal" role="dialog" aria-labelledby="modalTitle" aria-modal="true">
         <div class="modal-overlay" onclick="closeModal()"></div>
         <div class="modal-content">
             <div class="modal-header">
                 <h2 id="modalTitle">Pet Details</h2>
-                <button class="close" onclick="closeModal()">&times;</button>
+                <button class="close" onclick="closeModal()" aria-label="Close modal">&times;</button>
             </div>
             <div class="modal-body" id="modalBody">
                 <!-- Pet details will be inserted here -->
@@ -144,10 +236,97 @@
             </div>
         </div>
     </div>
+    
+    <!-- Export Modal -->
+    <div id="exportModal" class="modal" role="dialog" aria-labelledby="exportTitle" aria-modal="true">
+        <div class="modal-overlay" onclick="closeExportModal()"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="exportTitle">Export Pet Data</h2>
+                <button class="close" onclick="closeExportModal()" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="export-options">
+                    <button class="export-option-btn" onclick="exportData('json')">
+                        <span class="export-icon">📄</span>
+                        <div>
+                            <strong>JSON Format</strong>
+                            <p>Complete data with all fields</p>
+                        </div>
+                    </button>
+                    <button class="export-option-btn" onclick="exportData('csv')">
+                        <span class="export-icon">📊</span>
+                        <div>
+                            <strong>CSV Format</strong>
+                            <p>Spreadsheet-compatible format</p>
+                        </div>
+                    </button>
+                </div>
+                <div class="import-section">
+                    <h3>Import Data</h3>
+                    <input type="file" id="importFile" accept=".json,.csv" onchange="importData()" style="display: none;">
+                    <button class="import-btn" onclick="document.getElementById('importFile').click()">
+                        📤 Import from File
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeExportModal()" class="modal-close-btn">Close</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Keyboard Shortcuts Modal -->
+    <div id="shortcutsModal" class="modal" role="dialog" aria-labelledby="shortcutsTitle" aria-modal="true">
+        <div class="modal-overlay" onclick="closeShortcutsModal()"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="shortcutsTitle">⌨️ Keyboard Shortcuts</h2>
+                <button class="close" onclick="closeShortcutsModal()" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="shortcuts-list">
+                    <div class="shortcut-item">
+                        <kbd>Ctrl</kbd> + <kbd>N</kbd>
+                        <span>Focus on add pet form</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl</kbd> + <kbd>F</kbd>
+                        <span>Focus on search</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl</kbd> + <kbd>E</kbd>
+                        <span>Export data</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl</kbd> + <kbd>Z</kbd>
+                        <span>Undo last delete</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>?</kbd>
+                        <span>Show shortcuts</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Esc</kbd>
+                        <span>Close modal</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeShortcutsModal()" class="modal-close-btn">Close</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Toast Notification -->
-    <div id="toast" class="toast"></div>
+    <div id="toast" class="toast" role="alert" aria-live="polite"></div>
+    
+    <!-- Offline Indicator -->
+    <div id="offlineIndicator" class="offline-indicator">
+        📡 You're offline - Changes saved locally
+    </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
