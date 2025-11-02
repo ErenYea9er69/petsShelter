@@ -8,38 +8,47 @@
 </head>
 <body>
     <div class="container">
-        <h1>🐾 Pet Shelter Management System</h1>
+        <h1 class="main-title">🐾 Pet Shelter Management System</h1>
         
         <div class="main-content">
             <div class="card">
                 <h2>Add New Pet</h2>
                 
                 <div class="pet-type-selector">
-                    <button class="pet-type-btn active" onclick="selectPetType('dog')">🐕 Dog</button>
-                    <button class="pet-type-btn" onclick="selectPetType('cat')">🐱 Cat</button>
-                    <button class="pet-type-btn" onclick="selectPetType('bird')">🦜 Bird</button>
+                    <button class="pet-type-btn active" onclick="selectPetType('dog')" data-type="dog">
+                        <span class="emoji">🐕</span>
+                        <span class="label">Dog</span>
+                    </button>
+                    <button class="pet-type-btn" onclick="selectPetType('cat')" data-type="cat">
+                        <span class="emoji">🐱</span>
+                        <span class="label">Cat</span>
+                    </button>
+                    <button class="pet-type-btn" onclick="selectPetType('bird')" data-type="bird">
+                        <span class="emoji">🦜</span>
+                        <span class="label">Bird</span>
+                    </button>
                 </div>
 
                 <form id="petForm">
                     <div class="form-group">
                         <label>Pet Name</label>
-                        <input type="text" id="petName" required>
+                        <input type="text" id="petName" required placeholder="Enter pet name...">
                     </div>
 
                     <div class="form-group">
                         <label>Age (years)</label>
-                        <input type="number" id="petAge" min="0" max="30" required>
+                        <input type="number" id="petAge" min="0" max="30" required placeholder="Enter age...">
                     </div>
 
                     <div class="form-group">
                         <label>Color</label>
-                        <input type="text" id="petColor" required>
+                        <input type="text" id="petColor" required placeholder="Enter color...">
                     </div>
 
                     <div id="dogFields" class="specific-fields active">
                         <div class="form-group">
                             <label>Breed</label>
-                            <input type="text" id="dogBreed">
+                            <input type="text" id="dogBreed" placeholder="Enter breed...">
                         </div>
                     </div>
 
@@ -56,37 +65,63 @@
                     <div id="birdFields" class="specific-fields">
                         <div class="form-group">
                             <label>Wing Span (meters)</label>
-                            <input type="number" id="birdWingSpan" step="0.1" min="0" max="10">
+                            <input type="number" id="birdWingSpan" step="0.1" min="0" max="10" placeholder="Enter wing span...">
                         </div>
                     </div>
 
-                    <button type="submit">Add Pet to Shelter</button>
+                    <button type="submit" class="submit-btn">
+                        <span class="btn-text">Add Pet to Shelter</span>
+                        <span class="btn-icon">✨</span>
+                    </button>
                 </form>
             </div>
 
             <div class="card">
-                <h2>Shelter Pets</h2>
-                <div id="petsList" class="pets-list">
-                    <div class="empty-message">No pets in shelter yet. Add your first pet!</div>
+                <div class="card-header">
+                    <h2>Shelter Pets</h2>
+                    <div class="search-container">
+                        <input type="text" id="searchInput" placeholder="🔍 Search pets..." onkeyup="filterPets()">
+                    </div>
                 </div>
-                <button class="sound-all-btn" onclick="makeAllPetsSound()">🔊 Make All Pets Sound</button>
+                <div class="sort-container">
+                    <label>Sort by:</label>
+                    <select id="sortSelect" onchange="sortPets()">
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="name">Name (A-Z)</option>
+                        <option value="age">Age</option>
+                    </select>
+                </div>
+                <div id="petsList" class="pets-list">
+                    <div class="empty-message">
+                        <div class="empty-icon">🏠</div>
+                        <p>No pets in shelter yet. Add your first pet!</p>
+                    </div>
+                </div>
+                <button class="sound-all-btn" onclick="makeAllPetsSound()">
+                    <span>🔊 Make All Pets Sound</span>
+                </button>
             </div>
         </div>
 
         <div class="stats">
-            <div class="stat-item">
+            <div class="stat-item" data-stat="total">
+                <div class="stat-icon">🐾</div>
                 <h3>Total Pets</h3>
                 <div class="number" id="petCount">0</div>
             </div>
-            <div class="stat-item">
+            <div class="stat-item" data-stat="dog">
+                <div class="stat-icon">🐕</div>
                 <h3>Dogs</h3>
                 <div class="number" id="dogCount">0</div>
             </div>
-            <div class="stat-item">
+            <div class="stat-item" data-stat="cat">
+                <div class="stat-icon">🐱</div>
                 <h3>Cats</h3>
                 <div class="number" id="catCount">0</div>
             </div>
-            <div class="stat-item">
+            <div class="stat-item" data-stat="bird">
+                <div class="stat-icon">🦜</div>
                 <h3>Birds</h3>
                 <div class="number" id="birdCount">0</div>
             </div>
@@ -95,19 +130,23 @@
 
     <!-- Modal for pet details -->
     <div id="petModal" class="modal">
+        <div class="modal-overlay" onclick="closeModal()"></div>
         <div class="modal-content">
             <div class="modal-header">
                 <h2 id="modalTitle">Pet Details</h2>
-                <span class="close" onclick="closeModal()">&times;</span>
+                <button class="close" onclick="closeModal()">&times;</button>
             </div>
             <div class="modal-body" id="modalBody">
                 <!-- Pet details will be inserted here -->
             </div>
             <div class="modal-footer">
-                <button onclick="closeModal()">Close</button>
+                <button onclick="closeModal()" class="modal-close-btn">Close</button>
             </div>
         </div>
     </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
 
     <script src="script.js"></script>
 </body>
